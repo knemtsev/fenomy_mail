@@ -45,7 +45,7 @@ dependencies {
 
     implementation("com.zaxxer:HikariCP:5.0.1")
 
-    val configurationProcessor ="org.springframework.boot:spring-boot-configuration-processor:2.7.2"
+    val configurationProcessor ="org.springframework.boot:spring-boot-configuration-processor:2.7.5"
     kapt(configurationProcessor)
     annotationProcessor(configurationProcessor)
 
