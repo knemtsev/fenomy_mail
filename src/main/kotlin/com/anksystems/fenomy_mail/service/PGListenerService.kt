@@ -152,8 +152,10 @@ class PGListenerService(
     var notificationListener: PGNotificationListener? = null
 
     private fun resetListener() {
+        log.d("resetListener")
         pgConn?.let {
             try {
+                log.d("resetListener $it $notificationListener")
                 it.removeNotificationListener(notificationListener)
                 it.close()
             } catch (e: Exception) {
@@ -170,7 +172,7 @@ class PGListenerService(
                 lastNotificationTime = ZonedDateTime.now()
                 //println("Received from PG: $processId, $channelName")
                 log.d("Received from PG: $processId, $channelName")
-                log.t("Payload: $payload")
+                log.d("Payload: $payload")
                 try {
                     val notifyMessage = json.decodeFromStringSafe<NotifyMessage>(payload)
                     if (notifyMessage != null) {
@@ -179,8 +181,12 @@ class PGListenerService(
                             val mailMessage = getEmail(notifyMessage.id)
                             if(mailMessage!=null) {
                                 log.d("Message ${mailMessage.addressTo} id=${mailMessage.id} ")
-                                log.t("emailMessage: $mailMessage")
+                                log.d("emailMessage: $mailMessage")
                                 sendMessageService.send(mailMessage)
+                            }
+                            else
+                            {
+                                log.e("Message is NULL");
                             }
                         }
                     } else {
@@ -203,10 +209,10 @@ class PGListenerService(
 
         try {
             val conn = ds.connection
-            val pgConn = conn.unwrap(PGConnection::class.java)
+            pgConn = conn.unwrap(PGConnection::class.java)
 
-            pgConn.addNotificationListener(notificationListener)
-            pgConn.createStatement().use { statement -> statement.execute("LISTEN email;") }
+            pgConn?.addNotificationListener(notificationListener)
+            pgConn?.createStatement().use { statement -> statement?.execute("LISTEN email;") }
 
         } catch (e: SQLException) {
             throw RuntimeException(e)
@@ -219,7 +225,7 @@ class PGListenerService(
             Database.connect(ds)
             transaction {
                 mail = MailTable.select {
-                    MailTable.status.eq(id)
+                    MailTable.id.eq(UUID.fromString(id))
                 }.map { row ->
                     MailMessage(
                         id = row[MailTable.id].toString(),

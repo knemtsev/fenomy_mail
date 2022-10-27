@@ -14,6 +14,7 @@ import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
+import javax.mail.MessagingException
 
 @Service
 class SendMessageService(
@@ -77,8 +78,11 @@ class SendMessageService(
                 sentCount.incrementAndGet()
                 sentCountSuccess.incrementAndGet()
                 sentTotalTimeMs.addAndGet(interval)
+            } catch (e: MessagingException) {
+                val interval = ChronoUnit.MILLIS.between(startTime, ZonedDateTime.now())
+                log.e("[$interval ms] ERROR2: ${e.message}")
             } catch (e: Exception) {
-                queueToUpdateStatus.put(MailMessageStatus(message.id, MailStatus.FAILED))
+                //queueToUpdateStatus.put(MailMessageStatus(message.id, MailStatus.FAILED))
                 val interval = ChronoUnit.MILLIS.between(startTime, ZonedDateTime.now())
                 log.e("[$interval ms] ERROR: ${e.message}")
                 sentCount.incrementAndGet()

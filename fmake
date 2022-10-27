@@ -1,0 +1,29 @@
+#!/bin/bash
+
+git pull
+
+jar_name=`./gradlew -q jarPath`
+build_jar="build/libs/$jar_name"
+service_name=fenomy_mail
+service_link="/etc/init.d/$service_name"
+jar_path="/home/nemtsev/bin/$jar_name"
+
+set -e
+trap 'echo "FAILED"' ERR
+
+./gradlew bootJar
+
+[ ! -f "$build_jar" ] && echo "$build_jar not exists" && exit 1
+
+[ -f "$service_link" ] && sudo systemctl stop $service_name && sudo rm $service_link
+
+cp -f $build_jar $jar_path
+
+sudo ln -s $jar_path $service_link
+
+sudo systemctl daemon-reload
+
+sudo systemctl start $service_name
+
+tail -f /var/log/pushk.log
+
