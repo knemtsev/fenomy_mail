@@ -181,7 +181,7 @@ class PGListenerService(
                             val mailMessage = getEmail(notifyMessage.id)
                             if(mailMessage!=null) {
                                 log.d("Message ${mailMessage.addressTo} id=${mailMessage.id} ")
-                                log.d("emailMessage: $mailMessage")
+                                log.t("emailMessage: $mailMessage")
                                 sendMessageService.send(mailMessage)
                             }
                             else
