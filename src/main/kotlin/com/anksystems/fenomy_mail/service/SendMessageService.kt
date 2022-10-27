@@ -70,7 +70,7 @@ class SendMessageService(
         serviceScope.launch {
             val startTime = ZonedDateTime.now()
             try {
-                emailService.sendSimpleEmail(message.addressTo, message.subject, message.content)
+                emailService.sendMimeEmail(message.content)
                 val result = message.addressFrom + " " + message.addressTo + " " + message.subject
                 val interval = ChronoUnit.MILLIS.between(startTime, ZonedDateTime.now())
                 queueToUpdateStatus.put(MailMessageStatus(message.id, MailStatus.SUBMITTED))
@@ -78,11 +78,8 @@ class SendMessageService(
                 sentCount.incrementAndGet()
                 sentCountSuccess.incrementAndGet()
                 sentTotalTimeMs.addAndGet(interval)
-            } catch (e: MessagingException) {
-                val interval = ChronoUnit.MILLIS.between(startTime, ZonedDateTime.now())
-                log.e("[$interval ms] ERROR2: ${e.message}")
             } catch (e: Exception) {
-                //queueToUpdateStatus.put(MailMessageStatus(message.id, MailStatus.FAILED))
+                queueToUpdateStatus.put(MailMessageStatus(message.id, MailStatus.FAILED))
                 val interval = ChronoUnit.MILLIS.between(startTime, ZonedDateTime.now())
                 log.e("[$interval ms] ERROR: ${e.message}")
                 sentCount.incrementAndGet()
