@@ -9,7 +9,8 @@ service_link="/etc/init.d/$service_name"
 service_dir="/home/nemtsev/bin/$service_name"
 jar_path="$service_dir/$jar_name"
 
-if [ ! -f "$service_dir" ] then
+if [ ! -f "$service_dir" ]
+then
   mkdir "$service_dir"
   mkdir "$service_dir/config"
   cp src/main/resources/application.properties $service_dir/config
