@@ -35,18 +35,18 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 
-    val exposedVer = "0.39.2"
-    implementation("org.jetbrains.exposed:exposed-core:0.39.2")
-    implementation("org.jetbrains.exposed:exposed-dao:0.39.2")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.39.2")
-    implementation("org.jetbrains.exposed:exposed-java-time:0.39.2")
+    val exposedVer = "0.40.1"
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVer")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVer")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVer")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVer")
 
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     val configurationProcessor ="org.springframework.boot:spring-boot-configuration-processor:2.7.5"
-    kapt(configurationProcessor)
+    kapt("org.springframework.boot:spring-boot-configuration-processor:2.7.5")
     annotationProcessor(configurationProcessor)
 
     implementation("com.impossibl.pgjdbc-ng:pgjdbc-ng:0.8.9")
