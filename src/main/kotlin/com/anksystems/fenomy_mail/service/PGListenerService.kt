@@ -114,12 +114,13 @@ class PGListenerService(
     private fun countNewMail(): Long {
         var count = 0L
         try {
-            Database.connect(ds)
-            transaction {
+            transaction(Database.connect(ds)) {
                 count = MailTable.select { MailTable.status.eq(MailStatus.NEW.status) }.count()
             }
         } catch (e: Exception) {
             log.e(e)
+        } finally {
+
         }
         return count
     }
@@ -127,8 +128,7 @@ class PGListenerService(
     private suspend fun processNewMail() {
         try {
             lateinit var listMail: List<MailMessage>
-            Database.connect(ds)
-            transaction {
+            transaction(Database.connect(ds)) {
                 listMail = MailTable.select { MailTable.status.eq(MailStatus.NEW.status) }.map { row ->
                     MailMessage(
                         id = row[MailTable.id].toString(),
@@ -222,8 +222,8 @@ class PGListenerService(
     private fun getEmail(id: String): MailMessage? {
         var mail: MailMessage? = null
         try {
-            Database.connect(ds)
-            transaction {
+
+            transaction(Database.connect(ds)) {
                 mail = MailTable.select {
                     MailTable.id.eq(UUID.fromString(id))
                 }.map { row ->
@@ -254,8 +254,7 @@ class PGListenerService(
 
     fun setStatus(messageStatusList: List<MailMessageStatus>, status: String) {
         try {
-            Database.connect(ds)
-            transaction {
+            transaction(Database.connect(ds)) {
                 MailTable.update({ MailTable.id.inList(messageStatusList.map { UUID.fromString(it.id) }) }) {
                     it[MailTable.status] = status
                 }
